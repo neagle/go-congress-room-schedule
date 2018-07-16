@@ -27,7 +27,10 @@ try {
   console.error(e)
 }
 
-const data = parse(csv, { columns: true })
+let data = parse(csv, { columns: true })
+
+// Use to reduce the data during development for quick PDF building
+// data = data.filter(event => format(event.Date, 'DD') === '23')
 
 const days = {}
 let pdfsToCreate = 0
@@ -48,9 +51,15 @@ rimraf.sync('./build')
 
 Object.entries(days).forEach(([date, locations]) => {
   const dayFolder = `./build/${folderify(date)}`
+
   mkdirp.sync(dayFolder)
 
   Object.entries(locations).forEach(([location, events]) => {
+    // Manually over-ride certain location names
+    if (location === 'https://www.youtube.com/user/USGOWeb') {
+      location = 'The Official AGA Youtube Channel'
+    }
+
     events.sort((a, b) => {
       const aStart = new Date(`${date} ${a['Start Time']}`)
       const bStart = new Date(`${date} ${b['Start Time']}`)
@@ -115,6 +124,7 @@ Object.entries(days).forEach(([date, locations]) => {
     events.forEach(event => {
       const startTime = event['Start Time'].toLowerCase()
       const endTime = event['End Time'].toLowerCase()
+      const track = event.Track
       const title = event.Title
       const description = event.Description
 
@@ -127,7 +137,7 @@ Object.entries(days).forEach(([date, locations]) => {
           },
           {
             width: '*',
-            text: title,
+            text: `${track}: ${title}`,
             style: 'title'
           }
         ],
