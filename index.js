@@ -79,7 +79,7 @@ Object.entries(days).forEach(([date, locations]) => {
           margin: [0, 0, 0, 10]
         },
         {
-          text: `${location} - ${format(date, 'dddd, MMMM Mo')}`,
+          text: `${location} - ${format(date, 'dddd, MMMM Do')}`,
           style: 'header'
         }
       ],
